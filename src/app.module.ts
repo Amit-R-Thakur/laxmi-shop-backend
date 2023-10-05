@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { CategoryModule } from './catogory/category.module';
 import { DatabaseModule } from './database/database.module';
+import { FileUploadModule } from './file-upload/file-upload.module';
 import { UserModule } from './user/user.module';
 
 @Module({
@@ -18,6 +19,7 @@ import { UserModule } from './user/user.module';
     AuthModule,
     UserModule,
     CategoryModule,
+    FileUploadModule,
   ],
   controllers: [AppController],
   providers: [AppService],
