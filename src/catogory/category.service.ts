@@ -24,13 +24,11 @@ export class CategoryService {
     }
     // updating index number of category
     let index = null;
-    if (data.parent == 'string' || !data.parent) {
-      const temp = await this.categoryModel
-        .findOne()
-        .sort({ index: 'desc' }) // Sort by index field in descending order
-        .limit(1);
-      index = temp.index + 1;
-    }
+    const temp = await this.categoryModel
+      .findOne()
+      .sort({ index: 'desc' }) // Sort by index field in descending order
+      .limit(1);
+    index = temp.index + 1;
     return await this.categoryModel.create({ ...data, index });
   }
   async getAllCategory(): Promise<Category[]> {
@@ -52,6 +50,17 @@ export class CategoryService {
       throw new NotFoundException('Category is not empty.');
     }
     return await this.categoryModel.findByIdAndDelete(id);
+  }
+
+  async updateCategory(
+    id: string,
+    data: CreateCategoryDto,
+  ): Promise<Category[]> {
+    if ((await this.categoryModel.count({ _id: id })) == 0) {
+      throw new NotFoundException('Category does not exist.');
+    }
+    await this.categoryModel.findByIdAndUpdate(id, data);
+    return this.createCategories(await this.categoryModel.find());
   }
 
   async swapCategoryIndex(id1: string, id2: string): Promise<Category[]> {
