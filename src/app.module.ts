@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { CarouselModule } from './carousel/carousel.module';
 import { CategoryModule } from './catogory/category.module';
 import { DatabaseModule } from './database/database.module';
 import { UserModule } from './user/user.module';
@@ -18,6 +19,7 @@ import { UserModule } from './user/user.module';
     AuthModule,
     UserModule,
     CategoryModule,
+    CarouselModule,
   ],
   controllers: [AppController],
   providers: [AppService],
