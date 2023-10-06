@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Category } from './category.schema';
 import { CategoryService } from './category.service';
@@ -23,12 +31,20 @@ export class CategoryController {
     return this.categoryService.getCategoryById(id);
   }
 
+  @Patch(':id')
+  updateCategory(
+    @Body() data: CreateCategoryDto,
+    @Param('id') id: string,
+  ): Promise<Category[]> {
+    return this.categoryService.updateCategory(id, data);
+  }
+
   @Delete(':id')
   deleteCategoryById(@Param('id') id: string): Promise<Category[]> {
     return this.categoryService.deleteCategoryById(id);
   }
 
-  @Post('/swap-index/:id1/:id2')
+  @Patch('/swap-index/:id1/:id2')
   swapIndex(@Param('id1') id1: string, @Param('id2') id2: string) {
     return this.categoryService.swapCategoryIndex(id1, id2);
   }
