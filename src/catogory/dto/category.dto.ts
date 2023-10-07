@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateCategoryDto {
@@ -19,4 +20,11 @@ export class CreateCategoryDto {
   @ApiProperty()
   @IsOptional()
   logo?: string;
+}
+
+export class RandomCategoryDto {
+  @ApiProperty({ required: false })
+  @Transform(({ value }) => parseInt(value))
+  @IsOptional()
+  size?: number = 10;
 }
