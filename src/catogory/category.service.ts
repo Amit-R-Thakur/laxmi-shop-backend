@@ -78,6 +78,13 @@ export class CategoryService {
     return this.createCategories(await this.categoryModel.find());
   }
 
+  async getRandomCategories(size: number): Promise<Category[]> {
+    return this.categoryModel.aggregate([
+      { $match: { parent: { $ne: null } } },
+      { $sample: { size } }, // Get random 10 categories
+    ]);
+  }
+
   createCategories(categories, parentId = null) {
     const categoryList = [];
     let category;

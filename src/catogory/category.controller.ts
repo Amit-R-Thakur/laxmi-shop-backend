@@ -6,11 +6,12 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Category } from './category.schema';
 import { CategoryService } from './category.service';
-import { CreateCategoryDto } from './dto/category.dto';
+import { CreateCategoryDto, RandomCategoryDto } from './dto/category.dto';
 
 @ApiTags('Category')
 @Controller('category')
@@ -24,6 +25,11 @@ export class CategoryController {
   @Get()
   getCategory(): Promise<Category[]> {
     return this.categoryService.getAllCategory();
+  }
+
+  @Get('random')
+  getRandomCategories(@Query() data: RandomCategoryDto): Promise<Category[]> {
+    return this.categoryService.getRandomCategories(data.size);
   }
 
   @Get(':id')
