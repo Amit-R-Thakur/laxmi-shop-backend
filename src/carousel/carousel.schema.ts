@@ -11,6 +11,10 @@ export class Carousel extends Document {
   tittle: string;
 
   @Prop({ required: true })
+  @IsString()
+  heading: string;
+
+  @Prop({ required: true })
   @IsOptional()
   description?: string;
 

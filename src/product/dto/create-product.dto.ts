@@ -28,40 +28,24 @@ class DimensionsDto {
 
 class OverviewDto {
   @IsOptional()
-  @ApiProperty()
+  @ApiProperty({ type: [String] })
   @IsString()
-  finish?: string;
+  finish?: string[];
 
   @IsOptional()
-  @ApiProperty()
+  @ApiProperty({ type: [String] })
   @IsString()
-  color?: string;
+  color?: string[];
 
   @IsOptional()
-  @ApiProperty()
+  @ApiProperty({ type: [String] })
   @IsString()
-  primaryMaterial?: string;
+  primaryMaterial?: string[];
 
   @ApiProperty()
   @IsOptional()
-  @ValidateNested()
   @Type(() => DimensionsDto)
   dimensions?: DimensionsDto;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsBoolean()
-  armrest?: boolean;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsBoolean()
-  cushionedSeating?: boolean;
-
-  @IsOptional()
-  @ApiProperty()
-  @IsString()
-  cushionType?: string;
 
   @IsOptional()
   @ApiProperty()
@@ -71,54 +55,12 @@ class OverviewDto {
   @IsOptional()
   @ApiProperty()
   @IsNumber()
-  productQuantity?: number;
-
-  @IsOptional()
-  @ApiProperty()
-  @IsNumber()
   warranty?: number;
 
   @IsOptional()
   @ApiProperty()
   @IsString()
-  brand?: string;
-
-  @IsOptional()
-  @ApiProperty()
-  @IsString()
   deliveryEstimate?: string;
-}
-
-class HtmlDto {
-  @IsNotEmpty()
-  @ApiProperty()
-  @IsString()
-  overviewHtml: string;
-
-  @IsNotEmpty()
-  @ApiProperty()
-  @IsString()
-  merchantDetailsHtml: string;
-
-  @IsNotEmpty()
-  @ApiProperty()
-  @IsString()
-  careInstructionsHtml: string;
-
-  @IsNotEmpty()
-  @ApiProperty()
-  @IsString()
-  deliveryInstallationHtml: string;
-
-  @IsNotEmpty()
-  @ApiProperty()
-  @IsString()
-  warrantyHtml: string;
-
-  @IsNotEmpty()
-  @ApiProperty()
-  @IsString()
-  disclaimerHtml: string;
 }
 
 export class ProductDto {
@@ -132,20 +74,24 @@ export class ProductDto {
   @IsNumber({}, { message: 'Invalid product price.' })
   price: number;
 
+  @ApiProperty({ type: Boolean, default: false })
+  @IsOptional()
+  @IsBoolean()
+  isInstallationCharge?: boolean; // fix typo here
+
+  @ApiProperty({ type: Number, default: 0 })
+  @IsOptional()
+  @IsNumber()
+  installationCharge: number; // fix typo here
+
   @ApiProperty()
   @IsNotEmpty({ message: 'Product quantity is required.' })
   @IsNumber({}, { message: 'Invalid product quantity.' })
   quantity: number;
 
+  @Type(() => OverviewDto) // Ensure this decorator is present
   @ApiProperty()
-  @ValidateNested()
-  @Type(() => OverviewDto)
   overview: OverviewDto;
-
-  @ApiProperty()
-  @ValidateNested()
-  @Type(() => HtmlDto)
-  html: HtmlDto;
 
   @ApiProperty({ type: [String] })
   @IsOptional()
@@ -154,8 +100,17 @@ export class ProductDto {
   @IsEnum(AreaTag, { each: true, message: 'Invalid tag value.' })
   tags?: string[];
 
+  @ApiProperty({ type: [String] }) // specify array type
+  @IsOptional()
+  images: string[];
+
   @ApiProperty()
   @IsNotEmpty({ message: 'Category is required.' })
   @IsString({ message: 'Invalid category name.' })
   category: string;
+
+  @ApiProperty()
+  @IsNotEmpty({ message: 'Logo is required.' })
+  @IsString({ message: 'Invalid logo link.' })
+  logo: string;
 }

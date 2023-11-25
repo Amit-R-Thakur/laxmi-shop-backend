@@ -22,4 +22,7 @@ export class CarouselService {
   async deleteCarousel(id: string): Promise<Carousel> {
     return await this.carouselModel.findByIdAndDelete(id);
   }
+  async getCarouselById(id: string): Promise<Carousel> {
+    return await this.carouselModel.findById(id);
+  }
 }

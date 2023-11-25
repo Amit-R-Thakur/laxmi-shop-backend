@@ -10,6 +10,7 @@ import {
   Delete,
   Param,
   NotFoundException,
+  Query,
 } from '@nestjs/common';
 import { ApiTags, ApiConsumes } from '@nestjs/swagger';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
@@ -53,8 +54,8 @@ export class FileUploadController {
     return Object.values(FileKey).filter((key) => typeof key === 'string');
   }
 
-  @Delete(':url')
-  async deleteFileByUrl(@Param('url') url: string): Promise<void> {
+  @Delete()
+  async deleteFileByUrl(@Query('url') url: string): Promise<void> {
     try {
       await this.fileUploadService.deleteFileByUrl(url);
     } catch (error) {

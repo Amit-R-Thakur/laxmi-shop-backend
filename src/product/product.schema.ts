@@ -16,13 +16,13 @@ export class Dimensions {
 
 export class Overview {
   @Prop()
-  finish?: string;
+  finish?: [string];
 
   @Prop()
-  color?: string;
+  color?: [string];
 
   @Prop()
-  primaryMaterial?: string;
+  primaryMaterial?: [string];
 
   @Prop()
   dimensions?: Dimensions;
@@ -51,26 +51,6 @@ export class Overview {
   deliveryEstimate?: string;
 }
 
-export class Html {
-  @Prop()
-  overviewHtml: string;
-
-  @Prop()
-  merchantDetailsHtml: string;
-
-  @Prop()
-  careInstructionsHtml: string;
-
-  @Prop()
-  deliveryInstallationHtml: string;
-
-  @Prop()
-  warrantyHtml: string;
-
-  @Prop()
-  disclaimerHtml: string;
-}
-
 @Schema({ timestamps: true })
 export class Product extends Document {
   @Prop({ required: true })
@@ -83,24 +63,45 @@ export class Product extends Document {
   @IsNumber({}, { message: 'Invalid product price' })
   price: number;
 
+  @Prop({ required: false, default: false })
+  isInstalltionCharge?: boolean;
+
+  @Prop({ required: false, default: 0 })
+  @IsNumber({}, { message: 'Invalid product price' })
+  installtionCharge: number;
+
   @Prop({ required: true })
   @IsNotEmpty({ message: 'Product quantity is required' })
   @IsNumber({}, { message: 'Invalid product quantity' })
   quantity: number;
 
-  @Prop()
-  overview: Overview;
+  @Prop({ required: true, type: String })
+  @IsNotEmpty({ message: 'Logo is required' })
+  @IsString({ message: 'Invalid logo link' })
+  logo: string;
+
+  @Prop({ required: true, type: [String] })
+  @IsNotEmpty({ message: 'Logo is required' })
+  @IsString({ message: 'Invalid logo link' })
+  images: [string];
 
   @Prop()
-  html: Html;
+  overview: Overview;
 
   @Prop({
     type: [{ type: String, enum: Object.values(AreaTag) }],
   })
   tags: AreaTag[];
 
-  @Prop({ ref: 'Category' })
-  category: mongoose.Types.ObjectId;
+  @Prop({ ref: 'Category', default: null })
+  category?: mongoose.Types.ObjectId;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);
+
+ProductSchema.pre('save', async function (next) {
+  if (this?.category && this?.category?.toString() === 'string') {
+    this.category = null;
+  }
+  next();
+});
