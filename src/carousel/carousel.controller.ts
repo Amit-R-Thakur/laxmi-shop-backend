@@ -35,6 +35,11 @@ export class CaroselController {
     return this.caroselService.updateCarousel(id, data);
   }
 
+  @Get(':id')
+  getCarouselById(@Param('id') id: string): Promise<Carousel> {
+    return this.caroselService.getCarouselById(id);
+  }
+
   @Delete(':id')
   deleteCarousel(@Param('id') id: string): Promise<Carousel> {
     return this.caroselService.deleteCarousel(id);

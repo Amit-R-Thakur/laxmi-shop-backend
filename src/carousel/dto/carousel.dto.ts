@@ -11,6 +11,10 @@ export class CarouselCreateDto {
   description: string;
 
   @ApiProperty()
+  @IsNotEmpty({ message: 'Heading is required.' })
+  heading: string;
+
+  @ApiProperty()
   @IsNotEmpty({ message: 'Image is required.' })
   image: string;
 }

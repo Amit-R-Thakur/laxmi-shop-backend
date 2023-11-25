@@ -14,25 +14,39 @@ export class CategoryService {
     @InjectModel(Category.name) private categoryModel: Model<CategoryDocument>,
   ) {}
   async createCategory(data: CreateCategoryDto): Promise<Category> {
-    // checking if category name is exist or not
-    if (
-      (await this.categoryModel.count({
-        name: data.name.toLocaleUpperCase(),
-      })) > 0
-    ) {
-      throw new BadRequestException('Category already exist with this name.');
+    try {
+      // checking if category name is exist or not
+      if (
+        (await this.categoryModel.count({
+          name: data.name.toLocaleUpperCase(),
+        })) > 0
+      ) {
+        throw new BadRequestException('Category already exist with this name.');
+      }
+      // updating index number of category
+      let index = null;
+      const temp = await this.categoryModel
+        .findOne()
+        .sort({ index: 'desc' }) // Sort by index field in descending order
+        .limit(1);
+      index = temp.index + 1;
+      return await this.categoryModel.create({ ...data, index });
+    } catch (error) {
+      throw new BadRequestException(error?.message);
     }
-    // updating index number of category
-    let index = null;
-    const temp = await this.categoryModel
-      .findOne()
-      .sort({ index: 'desc' }) // Sort by index field in descending order
-      .limit(1);
-    index = temp.index + 1;
-    return await this.categoryModel.create({ ...data, index });
   }
   async getAllCategory(): Promise<Category[]> {
     return this.createCategories(await this.categoryModel.find());
+  }
+  async getAllCategoryList(): Promise<Category[]> {
+    return await this.categoryModel
+      .find()
+      .sort({ index: 1 })
+      .populate(['parent']);
+  }
+
+  async getChildCategoryList(): Promise<Category[]> {
+    return await this.categoryModel.find({ parent: { $ne: null } });
   }
   async getCategoryById(id: string): Promise<Category[]> {
     if ((await this.categoryModel.count({ _id: id })) == 0) {
@@ -47,7 +61,7 @@ export class CategoryService {
       throw new NotFoundException('Category does not exist.');
     }
     if ((await this.categoryModel.count({ parent: id })) > 0) {
-      throw new NotFoundException('Category is not empty.');
+      throw new NotFoundException(`You can't delete non empty category.`);
     }
     return await this.categoryModel.findByIdAndDelete(id);
   }

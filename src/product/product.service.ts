@@ -14,15 +14,31 @@ export class ProductService {
     @InjectModel(Category.name) private readonly categoryModel: Model<Category>,
   ) {}
 
-  async create(createProductDto: ProductDto): Promise<Product> {
-    if (
-      !isValidObjectId(createProductDto.category) ||
-      (await this.categoryModel.count({ _id: createProductDto.category })) == 0
-    ) {
-      throw new BadRequestException('Invalid category or does not exist.');
+  async create(createProductDto: ProductDto) {
+    try {
+      console.log(createProductDto);
+      if (
+        !isValidObjectId(createProductDto.category) ||
+        (await this.categoryModel.count({
+          _id: createProductDto.category,
+          parent: { $ne: null },
+        })) == 0
+      ) {
+        throw new BadRequestException('Invalid category or does not exist.');
+      }
+      const createdProduct = new this.productModel(createProductDto);
+      return createdProduct.save();
+    } catch (error) {
+      console.log(error);
     }
-    const createdProduct = new this.productModel(createProductDto);
-    return createdProduct.save();
+  }
+
+  async update(id: string, updateProduct: ProductDto) {
+    try {
+      return this.productModel.findByIdAndUpdate(id, updateProduct);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   getProductTags(): string[] {
@@ -30,11 +46,14 @@ export class ProductService {
   }
 
   async getProducts(): Promise<Product[]> {
-    return await this.productModel.find();
+    return await this.productModel
+      .find()
+      .populate(['category'])
+      .sort({ createdAt: -1 });
   }
 
   async getProductById(id: string): Promise<Product> {
-    return await this.productModel.findById(id);
+    return await this.productModel.findById(id).populate(['category']);
   }
 
   async getProductByCategory(categoryId: string): Promise<Product[]> {
@@ -52,6 +71,14 @@ export class ProductService {
 
   async deleteProductById(id: string): Promise<Product> {
     return await this.productModel.findByIdAndDelete(id);
+  }
+
+  async deleteImagesByUrl(id: string, url: string): Promise<Product> {
+    return await this.productModel.findByIdAndUpdate(
+      id,
+      { $pull: { images: url } },
+      { new: true },
+    );
   }
 
   async getProductByAreaTag(): Promise<any> {

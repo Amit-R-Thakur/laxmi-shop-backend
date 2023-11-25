@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Query,
+  Patch,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ProductDto } from './dto/create-product.dto';
@@ -22,6 +23,19 @@ export class ProductController {
   @Get()
   async getProducts(): Promise<Product[]> {
     return this.productService.getProducts();
+  }
+
+  @Post()
+  async createProduct(@Body() createProductDto): Promise<Product> {
+    return this.productService.create(createProductDto);
+  }
+
+  @Patch(':id')
+  async updateProduct(
+    @Param('id') id: string,
+    @Body() createProductDto,
+  ): Promise<Product> {
+    return this.productService.update(id, createProductDto);
   }
 
   @Get('tags')
@@ -60,15 +74,16 @@ export class ProductController {
     return this.productService.getRecentProduct(recentDto.size);
   }
 
-  @Post()
-  async createProduct(
-    @Body(new ValidationPipe()) createProductDto: ProductDto,
-  ) {
-    return this.productService.create(createProductDto);
-  }
-
   @Delete(':id')
   async deleteProductById(@Param('id') id: string): Promise<Product> {
     return this.productService.deleteProductById(id);
+  }
+
+  @Delete('images/:id')
+  async deleteImagesByUrl(
+    @Param('id') id: string,
+    @Query('url') url: string,
+  ): Promise<Product> {
+    return this.productService.deleteImagesByUrl(id, url);
   }
 }

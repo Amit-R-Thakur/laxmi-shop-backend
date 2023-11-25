@@ -27,6 +27,16 @@ export class CategoryController {
     return this.categoryService.getAllCategory();
   }
 
+  @Get('list')
+  getCategoryList(): Promise<Category[]> {
+    return this.categoryService.getAllCategoryList();
+  }
+
+  @Get('child/all')
+  getChildCategoryList(): Promise<Category[]> {
+    return this.categoryService.getChildCategoryList();
+  }
+
   @Get('random')
   getRandomCategories(@Query() data: RandomCategoryDto): Promise<Category[]> {
     return this.categoryService.getRandomCategories(data.size);

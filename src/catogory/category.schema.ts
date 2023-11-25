@@ -35,7 +35,7 @@ export class Category extends Document {
 export const CategorySchema = SchemaFactory.createForClass(Category);
 
 CategorySchema.pre('save', async function (next) {
-  if (this.parent.toString() === 'string') {
+  if (this?.parent && this?.parent?.toString() === 'string') {
     this.parent = null;
   }
   next();
